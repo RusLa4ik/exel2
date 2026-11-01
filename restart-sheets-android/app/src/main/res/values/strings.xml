@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RESTART Sheets</string>
+    <string name="menu_home">Головна</string>
+    <string name="menu_reload">Оновити</string>
+    <string name="menu_desktop">Режим ПК</string>
+    <string name="menu_copy">Копіювати посилання</string>
+    <string name="menu_browser">Відкрити в браузері</string>
+    <string name="copied">Посилання скопійовано</string>
+    <string name="downloading">Завантаження почалося, файл буде в «Завантаженнях»</string>
+    <string name="download_failed">Не вдалося завантажити файл. Скористайтеся пунктом «Файл → Завантажити» у самій таблиці.</string>
+    <string name="no_app">Немає додатка, щоб відкрити це посилання</string>
+</resources>

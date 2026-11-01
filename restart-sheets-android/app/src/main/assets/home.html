@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RESTART Sheets</title>
+<style>
+  :root {
+    --bg: #EDF0F3; --surface: #FFFFFF; --ink: #11181F; --ink-2: #5A6671;
+    --line: #D6DCE2; --accent: #0B7A5E; --accent-ink: #FFFFFF; --key: #F2F4F6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0D1216; --surface: #151C22; --ink: #EAF0F4; --ink-2: #8C99A4;
+      --line: #26303A; --accent: #3FD6A0; --accent-ink: #06261C; --key: #1D2730;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px 16px 32px; background: var(--bg); color: var(--ink);
+    font: 15px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  .wrap { max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand svg { width: 38px; height: 38px; color: var(--accent); flex: none; }
+  .brand b { display: block; font-size: 20px; letter-spacing: .08em; }
+  .brand small { color: var(--ink-2); letter-spacing: .1em; text-transform: uppercase; font-size: 11px; }
+  h2 { margin: 0 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+  .services { display: flex; flex-direction: column; gap: 8px; }
+  .services a {
+    display: flex; flex-direction: column; gap: 2px; padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink); text-decoration: none;
+  }
+  .services a:active { background: var(--key); }
+  .services strong { font-size: 16px; }
+  .services span { color: var(--ink-2); font-size: 13px; }
+  form { display: flex; flex-direction: column; gap: 8px; }
+  input {
+    width: 100%; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink); font: inherit;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    padding: 13px 14px; border: 0; border-radius: 12px; background: var(--accent);
+    color: var(--accent-ink); font: inherit; font-weight: 600;
+  }
+  .recent { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .recent a {
+    display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--surface); color: var(--ink); text-decoration: none; font-size: 13px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .hint { color: var(--ink-2); font-size: 13px; margin: 0; }
+  footer { border-top: 1px solid var(--line); padding-top: 14px; color: var(--ink-2); font-size: 13px; }
+  footer strong { color: var(--ink); letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M13.5 9.2A13 13 0 1 0 26.5 9.2" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M20 4v14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+    </svg>
+    <div><b>RESTART</b><small>Sheets</small></div>
+  </div>
+
+  <section>
+    <h2>Відкрити сервіс</h2>
+    <div class="services">
+      <a href="https://www.office.com/launch/excel"><strong>Excel Online</strong><span>Таблиці Microsoft 365</span></a>
+      <a href="https://onedrive.live.com/"><strong>OneDrive</strong><span>Ваші файли .xlsx, завантаження й вивантаження</span></a>
+      <a href="https://docs.google.com/spreadsheets/"><strong>Google Таблиці</strong><span>Спільне редагування онлайн</span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Відкрити за посиланням</h2>
+    <form id="f">
+      <input id="u" type="url" inputmode="url" autocapitalize="off" autocorrect="off"
+             placeholder="Вставте посилання на таблицю" aria-label="Посилання на таблицю">
+      <button type="submit">Відкрити</button>
+    </form>
+    <p class="hint">Посилання з інших додатків можна ділитися прямо сюди через «Поділитися».</p>
+  </section>
+
+  <section id="rs" hidden>
+    <h2>Нещодавні</h2>
+    <ul class="recent" id="rl"></ul>
+  </section>
+
+  <footer>Створено компанією <strong>RESTART</strong></footer>
+</div>
+
+<script>
+(function () {
+  var KEY = 'restart-recent';
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+  function save(list) {
+    try { localStorage.setItem(KEY, JSON.stringify(list.slice(0, 5))); } catch (e) {}
+  }
+  function norm(v) {
+    v = v.trim();
+    if (!v) return '';
+    if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+    return v;
+  }
+  function show() {
+    var list = load();
+    var ul = document.getElementById('rl');
+    ul.innerHTML = '';
+    list.forEach(function (u) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = u;
+      a.textContent = u.replace(/^https?:\/\//, '');
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    document.getElementById('rs').hidden = list.length === 0;
+  }
+  document.getElementById('f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var u = norm(document.getElementById('u').value);
+    if (!u) return;
+    var list = load().filter(function (x) { return x !== u; });
+    list.unshift(u);
+    save(list);
+    window.location.href = u;
+  });
+  show();
+})();
+</script>
+</body>
+</html>
